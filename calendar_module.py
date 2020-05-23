@@ -9,7 +9,7 @@ any sense."""
 # .xlsx
 
 # Note that in xlrd, the first row of the spreadsheet is 0 while in Excel, the
-# first row is 1.  Similarly, the first col of the spreadsheet is 1 in xlrd
+# first row is 1.  Similarly, the first col of the spreadsheet is 0 in xlrd
 # but A in Excel.
 
 # WARNING!!  Intrigma spreadsheets list MD names as first initial, last name
@@ -18,11 +18,18 @@ any sense."""
 
 # To Do
 # 1.  Detailed tests with test files in a test directory.
+# 2.  Implement errors that bubble up smoothly to the user rather than simply
+#       crash the program (see assignments_module for examples)
+# 3.  Figure out how to redirect the xlrd "errors"
 
-# Imports
+# Standard Library Imports
 import sys
 import datetime as dt
+
+# Third Party Imports
 import xlrd
+
+# Local Application Imports
 import shift_module
 import schedule_module
 

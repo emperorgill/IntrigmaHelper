@@ -23,7 +23,7 @@ LOOKUP_TABLE = {} # Will be loaded once by load_lookup_table and remain constant
                   # from then on
 
 # Helper functions
-def load_lookup_table(filename = "SACROS Lookup Table.xlsx"):
+def load_lookup_table(filename = "Config Files/SACROS Lookup Table.xlsx"):
     """Given a lookup table in the form of a properly formatted xlsx file,
     load the table into a global variable dictionary."""
     global LOOKUP_TABLE
@@ -169,5 +169,5 @@ def unit_tests():
     assert is_a_shift("Gill da Great!") == False
     print("is_a_shift() tests OK for false case!")
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     unit_tests()

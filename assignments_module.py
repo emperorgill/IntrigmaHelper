@@ -9,7 +9,7 @@ make any sense."""
 # .xlsx
 
 # Note that in xlrd, the first row of the spreadsheet is 0 while in Excel, the
-# first row is 1.  Similarly, the first col of the spreadsheet is 1 in xlrd
+# first row is 1.  Similarly, the first col of the spreadsheet is 0 in xlrd
 # but A in Excel.
 
 # WARNING!!  Intrigma spreadsheets list MD names as first initial, last name
@@ -18,33 +18,48 @@ make any sense."""
 
 # To Do
 # 1.  Detailed tests with test files in a test directory.
+# 2.  Figure out how to redirect the xlrd "errors"
 
-# Imports
+# Standard Library Imports
 import sys
 import datetime as dt
+
+# Third Party Imports
 import xlrd
+
+# Local Application Imports
 import shift_module
 import request_module
 import schedule_module
+import exceptions
 
 # Functions
 def read_assignments(filename):
     """Read all of the assignments from a filename-specified Intrigma
     Assignments .xls file and return them in a Schedule object."""
-    wb = xlrd.open_workbook(filename)
-    s = wb.sheet_by_index(0) # Just need the first sheet
-
-    # The name of the first sheet gives us the month and year of this
-    # schedule... but we'll need them as integers (e.g. "March 2020" -->
-    # 3 and 2020)
-    sheet_name_as_list = s.name.split()
-    month_as_text = sheet_name_as_list[0]
-    list_of_months = ["January", "February", "March", "April", "May", "June",
-                      "July", "August", "September", "October", "November",
-                      "December"]
-    month = list_of_months.index(month_as_text) + 1 # Months start at 1...
-    year = int(sheet_name_as_list[1])
-
+    try:
+        wb = xlrd.open_workbook(filename)
+    except FileNotFoundError:
+        raise FileNotFoundError("Error in assignments_module.py/" +
+            "read_assignments - couldn't find file " + filename)
+    try:
+        s = wb.sheet_by_index(0) # Just need the first sheet
+    
+        # The name of the first sheet gives us the month and year of this
+        # schedule... but we'll need them as integers (e.g. "March 2020" -->
+        # 3 and 2020)
+        sheet_name_as_list = s.name.split()
+        month_as_text = sheet_name_as_list[0]
+        list_of_months = ["January", "February", "March", "April", "May", 
+                          "June", "July", "August", "September", "October", 
+                          "November", "December"]
+        month = list_of_months.index(month_as_text) + 1 # Months start at 1...
+        year = int(sheet_name_as_list[1])
+    except:
+        raise BadInputFile("Error in assignments_module.py/read_assignments" +
+            " - couldn't make sense of the name of the first sheet of " +
+            filename)
+        
     # In the first column, somewhere near the bottom of the sheet, is the
     # word "Users".  We need to find it because all of the users lie between
     # this row and the last row; we'll save both of these rows as variables
@@ -57,9 +72,8 @@ def read_assignments(filename):
             end_row = s.nrows
             break
         if i == 0: # Finished searching without ever finding "Users"
-            print("Error in assignments_module/read_assignments!" +
-                  "  Never found 'Users'!")
-            sys.exit(1)
+            raise BadInputFile("Error in assignments_module/" +
+                "read_assignments!  Never found 'Users' in file " + filename)
 
     # In the first row, there will be a cell that has the number "1" in it.
     # That's the first day of the month so we need that.  There will also be a
@@ -76,9 +90,9 @@ def read_assignments(filename):
                 end_col = s.ncols-1
                 break
             if i == s.ncols-1:
-                print("Error in assignments_module/read_assignments!" +
-                      "  Never found first day of month!")
-                sys.exit(1)
+                raise BadInputFile("Error in assignments_module/" +
+                    "read_assignments!  Never found first day of month in " +
+                    "file " + filename)
 
     # Now ready to iterate through the spreadsheet and get all the requests and
     # shifts.  The first doc is found 6 rows below "Users".
@@ -94,12 +108,19 @@ def read_assignments(filename):
             # Now read through all the assignments, decide if they're requests
             # or shifts, and add them to the Schedule object
             for assignment in assignments:
-                if shift_module.is_a_shift(assignment) == True:
+                if assignment == "":
+                    continue
+                elif shift_module.is_a_shift(assignment) == True:
                     shift = shift_module.Shift(assignment, date, doctor)
                     output.add_shift(shift)
-                if request_module.is_a_request(assignment) == True:
+                elif request_module.is_a_request(assignment) == True:
                     request = request_module.Request(assignment, date, doctor)
                     output.add_request(request)
+                else:
+                    raise BadInputFile("Error in assignments_module/" +
+                        "read_assignments!  Could not understand assignment " +
+                        assignment + " in filename " + filename + 
+                        "at row/col " + str(row) + "/" + str(col))
     return output
 
 

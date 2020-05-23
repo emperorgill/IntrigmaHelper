@@ -1,0 +1,9 @@
+Please do the following...
+
+1.  In request_module.py, RECOGNIZED_REQUEST_TYPES is a hard-coded list.
+Please replace this list with an empty list.  Then, whenever is_a_request
+is called, check to see if the list is empty.  If it is empty, have the 
+computer read this list in from the file Request Types.txt in Config Files.  
+That way, hopefully, we do the disk operation only once rather than every
+time we have to call is_a_request.  You can refer to shift_module.py for
+an example of how to do this.

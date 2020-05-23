@@ -8,6 +8,7 @@ associated other functions.  Relies on the presence of "Credit Scoring.txt"
 # TO-DO
 # 1.  Make sure t8s/t8s, C4+/t1, C4+/t8 don't get double weekend credit
 # 2.  Make it so we only load the config table once
+# 3.  Finish the uncoded sections below (these are comments not followed by code)
 
 # Imports
 import datetime as dt

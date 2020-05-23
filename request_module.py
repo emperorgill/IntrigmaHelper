@@ -2,10 +2,16 @@
 
 # TO-DO
 # 1.  Implement the hours in a pp/pp2 request
+# 2.  More tests
 
-# Imports
+# Standard Library Imports
 import datetime as dt
+
+# Third Party Imports
 import openpyxl as xl
+
+# Local Application Imports
+import exceptions
 
 # Global variables
 RECOGNIZED_REQUEST_TYPES = ["pp", "pp2", "P", "P*", "K", "?", "F", "B", "B*",
@@ -33,8 +39,9 @@ class Request:
     def __init__(self, request_type, date, doctor = None):
         # If request_name is not a recognized type of request, complain
         if request_type not in RECOGNIZED_REQUEST_TYPES:
-            raise ValueError("Error in Request constructor.  {} not in list of"
-                             " RECOGNIZED_REQUEST_TYPES.".format(request_type))
+            raise BadRequestType("Error in request_module/Request " +
+                "constructor.  {} is not in the list of " +
+                "RECOGNIZED_REQUEST_TYPES.".format(request_type))
         self.request_type = request_type # String
         self.date = date # Datetime object
         self.doctor = doctor # String or None

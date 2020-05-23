@@ -1,0 +1,30 @@
+# A list of Request Types that the computer will recognize
+
+# Lines preceded by a "#" are for comments and the computer will ignore them.
+# The computer will also ignore any blank lines.
+
+pp
+pp2
+P
+P*
+K
+?
+F
+B
+B*
+s
+h
+AS
+W
+W*
+Wc
+We
+Wa
+Wd
+Wn
+X
+J
+SS
+SE
+M
+MD
