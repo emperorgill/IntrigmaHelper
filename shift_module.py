@@ -13,10 +13,12 @@
 # 3.  Fill in rest of table
 # 4.  Shift.credit property (depends on day of week)
 
-#Imports
+# Standard Library Imports
 import datetime as dt
-import openpyxl as xl
 import pprint # for debugging
+
+# Third Party Imports
+import openpyxl as xl
 
 #Global variables
 LOOKUP_TABLE = {} # Will be loaded once by load_lookup_table and remain constant

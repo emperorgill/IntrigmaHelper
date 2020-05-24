@@ -5,8 +5,10 @@
 # TO-DO
 # 1.  Schedule.__str__()
 
-# Imports
+# Standard Library Imports
 import datetime as dt
+
+# Local Application Imports
 import shift_module
 import request_module
 
