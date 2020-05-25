@@ -6,6 +6,7 @@
 
 # Standard Library Imports
 import datetime as dt
+import sys
 
 # Third Party Imports
 import openpyxl as xl
@@ -14,14 +15,39 @@ import openpyxl as xl
 import exceptions
 
 # Global variables
-RECOGNIZED_REQUEST_TYPES = ["pp", "pp2", "P", "P*", "K", "?", "F", "B", "B*",
-                            "s", "h", "AS", "W", "W*", "Wc", "We", "Wa", "Wd",
-                            "Wn", "X", "J", "SS", "SE", "M", "MD"]
+RECOGNIZED_REQUEST_TYPES = []
+                           #["pp", "pp2", "P", "P*", "K", "?", "F", "B", "B*",
+                           # "s", "h", "AS", "W", "W*", "Wc", "We", "Wa", "Wd",
+                           # "Wn", "X", "J", "SS", "SE", "M", "MD"]
 
 # Helper functions
+def load_request_types(filename = "Config Files/Request Types.txt"):
+    """Given a lookup table of request types, load the types into a global
+    variable list."""
+    global RECOGNIZED_REQUEST_TYPES
+
+    # Read the request type file, leaving out the comments and blank lines
+    try:
+        file_handle = open(filename, "rt")
+        for line in file_handle.readlines():
+            if (line[0] == "#" or line == "\n"):
+                continue
+            else:
+                RECOGNIZED_REQUEST_TYPES.append(line.strip())
+        file_handle.close()
+    except Exception as e:
+        print(e)
+        # Probably file not found
+        print("Error in request_module/load_request_types - could not" +
+              " open " + filename)
+        sys.exit(1)
+
 def is_a_request(request_type):
     """Tell if the received request_type (a string) is a a request type that
     this module knows about."""
+    # If RECOGNIZED_REQUEST_TYPES is an empty list, load from file
+    if not RECOGNIZED_REQUEST_TYPES:
+        load_request_types()
     if request_type in RECOGNIZED_REQUEST_TYPES:
         return True
     else:
@@ -36,10 +62,10 @@ def test_request_properties(request, expected_properties):
 
 # The actual Request class
 class Request:
-    def __init__(self, request_type, date, doctor = None):
+    def __init__(self, request_type, date, doctor = None):        
         # If request_name is not a recognized type of request, complain
-        if request_type not in RECOGNIZED_REQUEST_TYPES:
-            raise BadRequestType("Error in request_module/Request " +
+        if is_a_request(request_type) == False:
+            raise exceptions.BadRequestType("Error in request_module/Request " +
                 "constructor.  {} is not in the list of " +
                 "RECOGNIZED_REQUEST_TYPES.".format(request_type))
         self.request_type = request_type # String
@@ -68,7 +94,7 @@ def unit_tests():
 
     try:
         Request("foo", dt.datetime(1974, 8, 1))
-    except ValueError:
+    except exceptions.BadRequestType:
         print("\nBad Request object error catching tests OK!")
 
     assert is_a_request("B") == True
