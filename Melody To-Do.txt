@@ -7,3 +7,7 @@ computer read this list in from the file Request Types.txt in Config Files.
 That way, hopefully, we do the disk operation only once rather than every
 time we have to call is_a_request.  You can refer to shift_module.py for
 an example of how to do this.
+
+2.  Create program to tell us when various AACC shifts fall on the calendar.
+
+3.  Create a program that puts out statistics for a given schedule.
