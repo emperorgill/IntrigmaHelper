@@ -1,0 +1,33 @@
+# A list of dates that certain AACC shifts have occurred on in the past.
+# The computer will read these and count forward in time to see what dates
+# the shifts will occur on in the future (or backwards, into the past too).
+
+# Lines preceded by a "#" are for comments and the computer will ignore them.
+# The computer will also ignore any blank lines.
+
+# T. (6a-10p, occuring every other Friday).
+5/1/20
+5/15/20
+5/29/20
+
+# T6. (6a-4p, occuring every fourth Sat/Sun).
+5/2/20
+5/3/20
+5/30/20
+5/31/20
+
+# t8s (8a-1p then 5p-8p, ocurring every fourth WEEKDAY; skip WEEKENDS).
+5/6/20
+5/12/20
+5/18/20
+5/22/20
+5/28/20
+
+# t24 (MN-6a, occurs two days on then two days off etc.  Count both weekends
+# and weekdays).
+5/2/20
+5/3/20
+5/6/20
+5/7/20
+5/10/20
+5/11/20
