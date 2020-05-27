@@ -6,17 +6,20 @@
 # The computer will also ignore any blank lines.
 
 # T. (6a-10p, occuring every other Friday).
+T.
 5/1/20
 5/15/20
 5/29/20
 
 # T6. (6a-4p, occuring every fourth Sat/Sun).
+T6.
 5/2/20
 5/3/20
 5/30/20
 5/31/20
 
 # t8s (8a-1p then 5p-8p, ocurring every fourth WEEKDAY; skip WEEKENDS).
+t8s
 5/6/20
 5/12/20
 5/18/20
@@ -25,6 +28,7 @@
 
 # t24 (MN-6a, occurs two days on then two days off etc.  Count both weekends
 # and weekdays).
+t24
 5/2/20
 5/3/20
 5/6/20
