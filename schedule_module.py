@@ -4,6 +4,8 @@
 
 # TO-DO
 # 1.  Schedule.__str__()
+# 2.  Remove shifts/requests by date and short name?  Right now can only remove
+# by having a handle to the shift/request object to be removed.
 
 # Standard Library Imports
 import datetime as dt
