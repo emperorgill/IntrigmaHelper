@@ -7,3 +7,6 @@ class BadInputFile(Exception):
 
 class BadRequestType(Exception):
     pass
+
+class AssignmentNotRecognized(Exception):
+    pass

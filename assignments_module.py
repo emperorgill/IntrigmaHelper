@@ -19,7 +19,6 @@ make any sense."""
 # To Do
 # 1.  Figure out how to redirect the xlrd "errors" (maybe... details in
 # https://groups.google.com/forum/m/#!topic/python-excel/6Lue-1mTPSM)
-# 2.  Test to ensure handling two shifts/requests in one day properly.
 
 # Standard Library Imports
 import sys
@@ -32,7 +31,7 @@ import xlrd
 import shift_module
 import request_module
 import schedule_module
-from exceptions import BadInputFile
+from exceptions import BadInputFile, AssignmentNotRecognized
 
 # Functions
 def read_assignments(filename):
@@ -41,8 +40,7 @@ def read_assignments(filename):
     try:
         wb = xlrd.open_workbook(filename) #This line generates the xlrd "errors"
     except FileNotFoundError:
-        raise FileNotFoundError("Error in assignments_module.py/" +
-            "read_assignments - couldn't find file " + filename)
+        raise FileNotFoundError("Couldn't find file " + filename)
     
     try:
         s = wb.sheet_by_index(0) # Just need the first sheet
@@ -57,9 +55,8 @@ def read_assignments(filename):
         month = list_of_months.index(month_as_text) + 1 # Months start at 1...
         year = int(sheet_name_as_list[1])
     except:
-        raise BadInputFile("Error in assignments_module.py/read_assignments" +
-            " - couldn't make sense of the name of the first sheet of " +
-            filename)
+        raise BadInputFile("Couldn't make sense of the name of the first " + \
+                "sheet of " + filename)
         
     # In the first column, somewhere near the bottom of the sheet, is the
     # word "Users".  We need to find it because all of the users lie between
@@ -69,8 +66,7 @@ def read_assignments(filename):
     end_row = 0
     for i in range(s.nrows-1, -1, -1):
         if i == 0: # Finished searching without ever finding "Users"
-            raise BadInputFile("Error in assignments_module/" +
-                "read_assignments!  Never found 'Users' in file " + filename)
+            raise BadInputFile("Never found 'Users' in file " + filename)
             break
         if (s.cell(i, 0).value) == 'Users': # Searching for 'Users'
             start_row = i
@@ -92,12 +88,17 @@ def read_assignments(filename):
                 end_col = s.ncols-1
                 break
             if i == s.ncols-2:
-                raise BadInputFile("Error in assignments_module/" +
-                    "read_assignments!  Never found first day of month in " +
+                raise BadInputFile("Never found first day of month in " +
                     "file " + filename)
 
     # Now ready to iterate through the spreadsheet and get all the requests and
-    # shifts.  The first doc is found 6 rows below "Users".
+    # shifts.  The first doc is found 6 rows below "Users".  If we don't
+    # recognize an assignment, add its name to a string that will be returned
+    # via an Exception when all is complete.  That we report all unrecognized
+    # assignments in the file at once.
+    num_unk_assignments = 0
+    unk_assignments_string = "Could not recognize the following " + \
+        "assignment(s):\n"
     output = schedule_module.Schedule()
     for row in range(start_row+6, end_row):
         doctor = s.cell(row, 0).value # The 1st cell of the row has doc's name
@@ -108,7 +109,7 @@ def read_assignments(filename):
             assignments = s.cell(row, col).value.split("/") # There can be
                 # more than one assignment in a day
             # Now read through all the assignments, decide if they're requests
-            # or shifts, and add them to the Schedule object
+            # or shifts, and add them to the Schedule object.
             for assignment in assignments:
                 if assignment == "":
                     continue
@@ -119,10 +120,12 @@ def read_assignments(filename):
                     request = request_module.Request(assignment, date, doctor)
                     output.add_request(request)
                 else:
-                    raise BadInputFile("Error in assignments_module/" +
-                        "read_assignments!  Could not understand assignment " +
-                        assignment + " in filename " + filename + 
-                        "at row/col " + str(row) + "/" + str(col))
+                    num_unk_assignments += 1
+                    unk_assignments_string += assignment + \
+                        " at row " + str(row) + " col " + str(col) + ".\n"
+    if num_unk_assignments > 0:
+        raise AssignmentNotRecognized(unk_assignments_string)
+    # All done!
     return output
 
 
@@ -134,8 +137,7 @@ def unit_tests():
     try:
         nosuchfile = read_assignments("No such file")
     except FileNotFoundError as e:
-        if str(e) == "Error in assignments_module.py/read_assignments " + \
-            "- couldn't find file No such file":
+        if str(e) == "Couldn't find file No such file":
             print("1.  Passed File Not Found testing!")
         else:
             print("1.  !!!FAILED FILE NOT FOUND TESTING!!!")
@@ -144,9 +146,8 @@ def unit_tests():
         badfirstsheet = read_assignments("Test Files/Bad First Sheet" + \
             " Assignments.xls")
     except BadInputFile as e:
-        if str(e) == "Error in assignments_module.py/read_assignments - " + \
-           "couldn't make sense of the name of the first sheet of Test " + \
-           "Files/Bad First Sheet Assignments.xls":
+        if str(e) == "Couldn't make sense of the name of the first sheet " + \
+           "of Test Files/Bad First Sheet Assignments.xls":
             print("2.  Passed First Sheet Bad testing!")
         else:
             print("2.  !!!FAILED FIRST SHEET BAD TESTING!!!")
@@ -155,8 +156,8 @@ def unit_tests():
         nousers = read_assignments("Test Files/No Users" + \
             " Assignments.xls")
     except BadInputFile as e:
-        if str(e) == "Error in assignments_module/read_assignments!  " + \
-           "Never found 'Users' in file Test Files/No Users Assignments.xls":
+        if str(e) == "Never found 'Users' in file Test Files/No Users " + \
+            "Assignments.xls":
             print("3.  Passed No 'Users' testing!")
         else:
             print("3.  !!!FAILED NO 'USERS' TESTING!!!")
@@ -165,9 +166,8 @@ def unit_tests():
         badfirstday = read_assignments("Test Files/Bad First Day" + \
             " Assignments.xls")
     except BadInputFile as e:
-        if str(e) == "Error in assignments_module/read_assignments!  " + \
-           "Never found first day of month in file Test Files/Bad " + \
-           "First Day Assignments.xls":
+        if str(e) == "Never found first day of month in file Test Files/" + \
+           "Bad First Day Assignments.xls":
             print("4.  Passed Bad First Day testing!")
         else:
             print("4.  !!!FAILED BAD FIRST DAY TESTING!!!")
@@ -175,18 +175,21 @@ def unit_tests():
     try:
         badassignment = read_assignments("Test Files/Bad Assignment" + \
             " Assignments.xls")
-    except BadInputFile as e:
-        if str(e) == "Error in assignments_module/read_assignments!  " + \
-           "Could not understand assignment A Very Bad Assignment in " + \
-           "filename Test Files/Bad Assignment Assignments.xlsat row/col 667/13":
+    except AssignmentNotRecognized as e:
+        if str(e) == "Could not recognize the following assignment(s):\n" + \
+           "A Very Bad Assignment at row 667 col 13.\n" + \
+           "Another Bad Assignment at row 672 col 11.\n":
             print("5.  Passed Bad Assignment testing!")
         else:
             print("5.  !!!FAILED BAD ASSIGNMENT TESTING!!!")
 
+    # Note, the test below also incorporations ensuring that request/request,
+    # assignment/assignment, assignment/request, request/assignment are read
+    # correctly.
     July2020 = read_assignments("Test Files/Almost Empty July 2020" +
         " Assignments.xls")
-    assert July2020.num_of_shifts() == 1
-    assert July2020.num_of_requests() == 9
+    assert July2020.num_of_shifts() == 5 
+    assert July2020.num_of_requests() == 10
     print("6.  Passed Almost Empty July 2020 Assignments testing!")
 
 

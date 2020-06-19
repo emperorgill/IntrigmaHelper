@@ -16,6 +16,8 @@ request_module.py
 scehdule_module.py
 shift_module.py
 exceptions.py
+AACC_dates.py
+units_scheduled.py
 (These are the modules that do actual data processing/work.  Ideally they don't
 have to be changed unless the nature of the data processing/work changes.)
 
@@ -27,3 +29,12 @@ replaced if ever you decide to move from a command line interface to a GUI).
 In addition, there are actual sub-directories...
 Config Files - contains user-editable text files that configure the program.
 Test Files - contains files used in unit testing the various modules.
+
+Finally, here is a list of evil things that tripped us up when writing this
+program...
+1.  In Excel if you type ... (as in a shift name 8rp...), Excel will 
+Auto-correct this from three periods to a single ellipse character.  It 
+displays the same in Excel but not in Python.  When you try to compare
+8rp...(ellipse) from Excel to 8rp...(three periods) in Python, it won't
+work!  You have to go to File-->Options-->AutoCorrect in Excel to delete
+this AutoCorrect entry.

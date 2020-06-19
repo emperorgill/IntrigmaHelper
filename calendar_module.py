@@ -164,11 +164,11 @@ def unit_tests():
         else:
             print("3.  !!!FAILED BAD MONTH/YEAR TESTING!!!")
 
-    July2020 = read_calendar("Test Files/Almost Empty July 2020 Calendar.xls")
+    July2020 = read_calendar("Test Files/Not Almost Empty July 2020 Calendar.xls")
     assert July2020.num_of_shifts == 1
     assert July2020.num_of_requests == 0 # Should always be 0; Calendar files
                                         # don't have requests!
-    print("NNN.  Passed Almost Empty July 2020 Calendar testing!\n")
+    print("NNN.  Passed Not Almost Empty July 2020 Calendar testing!\n")
 
 if __name__ == "__main__":
     unit_tests()

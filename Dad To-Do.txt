@@ -1,0 +1,2 @@
+1.  Rewrite all of the printed errors into Exceptions.
+2.  Make sure none of the Exceptions say module/function the Exception came from... Exceptions do this automatically.

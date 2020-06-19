@@ -15,10 +15,7 @@ import openpyxl as xl
 import exceptions
 
 # Global variables
-RECOGNIZED_REQUEST_TYPES = []
-                           #["pp", "pp2", "P", "P*", "K", "?", "F", "B", "B*",
-                           # "s", "h", "AS", "W", "W*", "Wc", "We", "Wa", "Wd",
-                           # "Wn", "X", "J", "SS", "SE", "M", "MD"]
+RECOGNIZED_REQUEST_TYPES = [] # Will load from config file
 
 # Helper functions
 def load_request_types(filename = "Config Files/Request Types.txt"):

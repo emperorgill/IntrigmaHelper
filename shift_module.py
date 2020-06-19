@@ -10,8 +10,10 @@
 # TO-DO
 # 1.  convert_date() input checking
 # 2.  More shift object property testing (AACC, RLS, EPRP, Call, etc)
-# 3.  Fill in rest of table
+# 3.  Fill in rest of lookup table
 # 4.  Shift.credit property (depends on day of week)
+# 5.  Shift constructor needs to throw exception when asked to create a shift
+# that's not found in the lookup table (like the Request constructor does).
 
 # Standard Library Imports
 import datetime as dt
