@@ -59,7 +59,9 @@ class Schedule:
             dates_in_sched.append(shift.start_time)
         for request in self.requests:
             dates_in_sched.append(request.date)
-        return min(dates_in_sched)
+        first_datetime = min(dates_in_sched)
+        first_date = first_datetime.date()
+        return first_date
 
     def last_date(self):
         """Returns a DateTime object with the latest date (NOT time!) that a 
@@ -72,7 +74,9 @@ class Schedule:
             dates_in_sched.append(shift.start_time)
         for request in self.requests:
             dates_in_sched.append(request.date)
-        return max(dates_in_sched)
+        last_datetime = max(dates_in_sched)
+        last_date = last_datetime.date()
+        return last_date
 
 # Unit test script for the Schedule class
 def unit_tests():

@@ -98,7 +98,7 @@ class Shift:
                             dt.timedelta(hours=LOOKUP_TABLE[shift_name][3])
         self.hours_paid = dt.timedelta(hours=LOOKUP_TABLE[shift_name][4])
             #Timedelta object
-        self.is_PIT = True if LOOKUP_TABLE[shift_name][5][0].lower == 'y' else False
+        self.is_PIT = True if LOOKUP_TABLE[shift_name][5][0].lower() == 'y' else False
             #Boolean
         self.doctor = doctor # String if a doctor is assigned, None otherwise
 
