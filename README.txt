@@ -29,6 +29,8 @@ replaced if ever you decide to move from a command line interface to a GUI).
 In addition, there are actual sub-directories...
 Config Files - contains user-editable text files that configure the program.
 Test Files - contains files used in unit testing the various modules.
+Real Data - contains exported files from some months that have been previously
+worked (ie, they're not going to be changed by any further trades)
 
 Finally, here is a list of evil things that tripped us up when writing this
 program...

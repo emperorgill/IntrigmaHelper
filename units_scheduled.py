@@ -62,14 +62,16 @@ def units_scheduled(filename):
             data[date]["ROS ED"] += shift.hours_paid.seconds/(3600*4)
         elif shift.location == "Roseville" and shift.is_PIT == True:
             data[date]["ROS PIT"] += shift.hours_paid.seconds/(3600*4)
+        elif shift.location == "Other":
+            pass
         else: # Handles AACC, EPRP, Regional Lab, CDA, Call
             data[date][shift.location] += shift.hours_paid.seconds/(3600*4)
 
     return data
 
 # Unit test script/basic use case for the units_scheduled.py module
-def unit_tests(filename = ""):
-    if filename == "":
+def unit_tests(filename = "October 2020.xls"):
+    if filename == "": # Run unit tests
         data = units_scheduled("Test Files/Test Units Scheduled Assignments.xls")
         assert data[dt.date(2020, 7, 6)]["SAC ED"] == 4
         assert data[dt.date(2020, 7, 7)]["SAC PIT"] == 4.75
@@ -86,7 +88,13 @@ def unit_tests(filename = ""):
         assert data[dt.date(2020, 7, 18)]["AACC"] == 3
         assert data[dt.date(2020, 7, 19)]["Call"] == 0
         print("units_scheduled.py passed unit testing!")
-    else:
+    else: # Run this basic version that we currently have urgent need for
+        data = units_scheduled(filename)
+        list_dates =  data.keys()
+        for date in list_dates:
+            SAC_capacity = data[date]["SAC ED"]*5.7 + data[date]["SAC PIT"]*9.3
+            ROS_capacity = data[date]["ROS ED"]*5.7 + data[date]["ROS PIT"]*9.3
+            print(str(ROS_capacity))
         
     
 if __name__ == "__main__":
