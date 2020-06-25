@@ -6,6 +6,9 @@
 # 1.  Schedule.__str__()
 # 2.  Remove shifts/requests by date and short name?  Right now can only remove
 # by having a handle to the shift/request object to be removed.
+# 3.  How can we combine two Schedule objects into one?
+# 4.  When adding Shift/Requests OR when combining two Schedule objects, we
+# need to weed out duplicates.
 
 # Standard Library Imports
 import datetime as dt

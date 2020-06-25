@@ -2,7 +2,8 @@
 # helper functions.
 
 # TO-DO
-# 1.  Write the program.
+# 1.  Unit tests.
+# 2.  Write to output in varying formats as needed.
 
 # Standard Library Imports
 import datetime as dt

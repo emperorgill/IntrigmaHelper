@@ -2,7 +2,8 @@
 
 # Lines preceded by a "#" are for comments and the computer will ignore them.
 # The computer will also ignore any blank lines.  The order in which these
-# lists occur is important as is the "End Friday shifts" line!
+# lists occur is important.  The phrases that precede each list e.g
+# "Early shifts" or "Late shifts" are also important.
 
 # Nights and weekends are hardcoded in credit_lookup_module
 
@@ -60,10 +61,11 @@ Friday shifts
 0230	1
 0300	1
 0330	1
-End Friday shifts
 
 # Call shifts - a list of comma separated shifts that get call credit
+Call shifts
 C1,C2,C3,C4,C4+,C1*,C2*,C3*,C4*,C4+*
 
 # No credit shifts - a list of comma separated shifts that get no credit
-rl,SDM,CDA A lab, CDA B lab, CDA C lab.AOC,AOC-Sac,AOC-Ros,Hit list,8R RESP,15R RESP,8Rt vol,14Rt vol,18Rt vol,10M URI,17M URI,8Mt vol,11m vol,14Mt vol,18Mt vol
+No credit shifts
+rl,SDM,CDA A lab,CDA B lab,CDA C lab,AOC,AOC-Sac,AOC-Ros,Hit list,8R RESP,15R RESP,8Rt vol,14Rt vol,18Rt vol,10M URI,17M URI,8Mt vol,11m vol,14Mt vol,18Mt vol

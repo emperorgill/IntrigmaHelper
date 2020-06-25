@@ -14,6 +14,7 @@
 # 4.  Shift.credit property (depends on day of week)
 # 5.  Shift constructor needs to throw exception when asked to create a shift
 # that's not found in the lookup table (like the Request constructor does).
+# Make sure downstream objects handle it smoothly.
 
 # Standard Library Imports
 import datetime as dt

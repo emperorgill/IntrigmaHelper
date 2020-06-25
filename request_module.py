@@ -6,7 +6,6 @@
 
 # Standard Library Imports
 import datetime as dt
-import sys
 
 # Third Party Imports
 import openpyxl as xl
@@ -33,11 +32,9 @@ def load_request_types(filename = "Config Files/Request Types.txt"):
                 RECOGNIZED_REQUEST_TYPES.append(line.strip())
         file_handle.close()
     except Exception as e:
-        print(e)
         # Probably file not found
-        print("Error in request_module/load_request_types - could not" +
-              " open " + filename)
-        sys.exit(1)
+        print("Error while attempting to open " + filename + ".  Error " + \
+              "Message read " + e)
 
 def is_a_request(request_type):
     """Tell if the received request_type (a string) is a a request type that
@@ -62,8 +59,7 @@ class Request:
     def __init__(self, request_type, date, doctor = None):        
         # If request_name is not a recognized type of request, complain
         if is_a_request(request_type) == False:
-            raise exceptions.BadRequestType("Error in request_module/Request " +
-                "constructor.  {} is not in the list of " +
+            raise exceptions.BadRequestType("{} is not in the list of " + \
                 "RECOGNIZED_REQUEST_TYPES.".format(request_type))
         self.request_type = request_type # String
         self.date = date # Datetime object

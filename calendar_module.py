@@ -18,11 +18,9 @@ any sense."""
 
 # To Do
 # 1.  ARE WE READING ALL SHIFTS IN THE FILE OR JUST THIS MONTH'S!!!
-# 2.  Implement errors that bubble up smoothly to the user rather than simply
-#       crash the program (see assignments_module for examples)
-# 3.  Figure out how to redirect the xlrd "errors" (maybe... see URL noted in
+# 2.  Figure out how to redirect the xlrd "errors" (maybe... see URL noted in
 # assignments_module for more details)
-# 4.  Test to ensure handling two doctors assigned to one shift properly.
+# 3.  Test to ensure handling two doctors assigned to one shift properly.
 
 # Standard Library Imports
 import sys
@@ -43,8 +41,7 @@ def read_calendar(filename):
     try:
         wb = xlrd.open_workbook(filename)
     except FileNotFoundError:
-        raise FileNotFoundError("Error in calendar_module.py/read_calendar" + \
-            " - couldn't find file " + filename)
+        raise FileNotFoundError("Couldn't find file " + filename)
     try:
         s = wb.sheet_by_index(0) # Just need the first sheet
         # The month and year of this calendar are in the first row, fifth cell...
@@ -56,9 +53,8 @@ def read_calendar(filename):
         month = list_of_months.index(month_as_text) + 1 # Months start at 1...
         year = int(target_cell[1])
     except:
-        raise BadInputFile("Error in calendar_module/read_calendar" + \
-            " - couldn't make sense of the first row, fifth column of " +
-            filename)
+        raise BadInputFile("Couldn't make sense of the first row, fifth " + \
+            "column of " + filename)
 
     output = schedule_module.Schedule()
     
@@ -76,9 +72,8 @@ def read_calendar(filename):
                 read_shifts(row, col, month, year, s, output)
                 num_headers += 1
     if num_headers != 35:
-        raise BadInputFile("Error in calendar_module/read_calendar - " + \
-            "Expected 35 date headers in " + str(filename) + " but found " + \
-            str(num_headers))
+        raise BadInputFile("Expected 35 date headers in " + str(filename) + \
+            " but found " + str(num_headers))
     
     return output
 
@@ -135,8 +130,7 @@ def unit_tests():
     try:
         nosuchfile = read_calendar("No such file")
     except FileNotFoundError as e:
-        if str(e) == "Error in calendar_module.py/read_calendar - " + \
-            "couldn't find file No such file":
+        if str(e) == "Couldn't find file No such file":
             print("1.  Passed File Not Found Testing!")
         else:
             print("1.  !!!FAILED FILE NOT FOUND TESTING!!!")
@@ -145,9 +139,8 @@ def unit_tests():
         badfirstsheet = read_calendar("Test Files/Bad First Sheet" + \
             " Calendar.xls")
     except BadInputFile as e:
-        if str(e) == "Error in calendar_module/read_calendar - couldn't " + \
-            "make sense of the first row, fifth column of Test Files/Bad " + \
-            "First Sheet Calendar.xls":
+        if str(e) == "Couldn't make sense of the first row, fifth column " + \
+            "of Test Files/Bad First Sheet Calendar.xls":
             print("2.  Passed Bad Date Header testing!")
         else:
             print("2.  !!!FAILED BAD DATE HEADER TESTING!!!")

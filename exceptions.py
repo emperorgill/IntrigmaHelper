@@ -5,6 +5,9 @@
 class BadInputFile(Exception):
     pass
 
+class BadInput(Exception):
+    pass
+
 class BadRequestType(Exception):
     pass
 
