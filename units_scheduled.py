@@ -71,7 +71,7 @@ def units_scheduled(filename):
     return data
 
 # Unit test script/basic use case for the units_scheduled.py module
-def unit_tests(filename = "October 2020.xls"):
+def unit_tests(filename = "July 2020.xls"):
     if filename == "": # Run unit tests
         data = units_scheduled("Test Files/Test Units Scheduled Assignments.xls")
         assert data[dt.date(2020, 7, 6)]["SAC ED"] == 4
@@ -95,7 +95,7 @@ def unit_tests(filename = "October 2020.xls"):
         for date in list_dates:
             SAC_capacity = data[date]["SAC ED"]*5.7 + data[date]["SAC PIT"]*9.3
             ROS_capacity = data[date]["ROS ED"]*5.7 + data[date]["ROS PIT"]*9.3
-            print(str(ROS_capacity))
+            print(str(SAC_capacity))
         
     
 if __name__ == "__main__":
