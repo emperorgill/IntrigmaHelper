@@ -20,7 +20,9 @@ def units_scheduled(filename):
     many units were worked each date in the various areas the ED must staff.
     Ignores any shift whose "doctor" has a name that starts with three
     asterisks as these are placeholders for shifts that were not worked e.g.
-    ***CANCELLED*** ***ORPHAN*** and the like."""
+    ***CANCELLED*** ***VOLUNTEER*** and the like.  The only exception is
+    ***ORPHAN*** which probably WAS worked but the call doctor didn't put
+    his name in the correct slot."""
     schedule = assignments_module.read_assignments(filename)
     if schedule.is_empty == True:
         return (str(filename) + " contains an empty schedule!\n")
@@ -52,7 +54,7 @@ def units_scheduled(filename):
     for shift in schedule.shifts:
         if shift.doctor == None:
             continue
-        if shift.doctor[0:3] == "***":
+        if shift.doctor[0:3] == "***" and shift.doctor != "***ORPHAN***":
             continue
         date = shift.start_time.date()
         if shift.location == "Sacramento" and shift.is_PIT == False:
@@ -71,7 +73,7 @@ def units_scheduled(filename):
     return data
 
 # Unit test script/basic use case for the units_scheduled.py module
-def unit_tests(filename = "July 2020.xls"):
+def unit_tests(filename = "June 2020.xls"):
     if filename == "": # Run unit tests
         data = units_scheduled("Test Files/Test Units Scheduled Assignments.xls")
         assert data[dt.date(2020, 7, 6)]["SAC ED"] == 4
@@ -92,10 +94,12 @@ def unit_tests(filename = "July 2020.xls"):
     else: # Run this basic version that we currently have urgent need for
         data = units_scheduled(filename)
         list_dates =  data.keys()
+        AACC_units = 0
         for date in list_dates:
             SAC_capacity = data[date]["SAC ED"]*5.7 + data[date]["SAC PIT"]*9.3
             ROS_capacity = data[date]["ROS ED"]*5.7 + data[date]["ROS PIT"]*9.3
-            print(str(SAC_capacity))
+            AACC_units += data[date]["AACC"] 
+            print(str(AACC_units))
         
     
 if __name__ == "__main__":
