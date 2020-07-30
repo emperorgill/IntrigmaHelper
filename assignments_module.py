@@ -21,7 +21,6 @@ make any sense."""
 # https://groups.google.com/forum/m/#!topic/python-excel/6Lue-1mTPSM)
 
 # Standard Library Imports
-import sys
 import datetime as dt
 
 # Third Party Imports
@@ -57,52 +56,60 @@ def read_assignments(filename):
     except:
         raise BadInputFile("Couldn't make sense of the name of the first " + \
                 "sheet of " + filename)
-        
+
     # In the first column, somewhere near the bottom of the sheet, is the
     # word "Users".  We need to find it because all of the users lie between
     # this row and the last row; we'll save both of these rows as variables
     # for later.
     start_row = 0
     end_row = 0
+    # Below, the start index has to be s.nrows-1 to read the last line of
+    # the XLS.  Using just s.nrows has it try to read past the last line.
+    # Stop index has to be -1 to get it to the i=0 case; otherwise, the 
+    # very first line of the XLS is never checked.
     for i in range(s.nrows-1, -1, -1):
-        if i == 0: # Finished searching without ever finding "Users"
-            raise BadInputFile("Never found 'Users' in file " + filename)
-            break
         if (s.cell(i, 0).value) == 'Users': # Searching for 'Users'
             start_row = i
             end_row = s.nrows
             break
-
+        if i == 0: # Finished searching without ever finding "Users"
+            raise BadInputFile("Never found 'Users' in file " + filename)
+          
     # In the first row, there will be a cell that has the number "1" in it.
-    # That's the first day of the month so we need that.  There will also be a
-    # cell that precedes the last cell of the row; that will be the last day
-    # of the month so we'll need that too.
-    start_col = 0
-    end_col = 0
-    for i in range(s.ncols-1):
+    # That's the first day of the month so we need that.  
+    start_col = None
+    for i in range(s.ncols): #Verified to check every single column
         split_text = s.cell(0, i).value.split()
         if len(split_text) > 1: # Need because 1st cell has just 1 word in it
                                 # while all the other cells have 2
             if split_text[1] == "1":
                 start_col = i
-                end_col = s.ncols-1
                 break
-            if i == s.ncols-2:
-                raise BadInputFile("Never found first day of month in " +
-                    "file " + filename)
+    if start_col == None:
+        raise BadInputFile("Never found first day of month in file "
+                           + filename)
+    
+    # We also need the last day of the month but the trouble is that SOMETIMES
+    # Intrigma has the last column be a "Units" column and SOMETIMES it has 
+    # the last column be the last day of the month.  You would not believe how
+    # much time I wasted until I figured this out.
+    if s.cell(0,s.ncols-1).value.split()[0] == "Units":
+        end_col = s.ncols - 2
+    else:
+        end_col = s.ncols - 1
 
     # Now ready to iterate through the spreadsheet and get all the requests and
     # shifts.  The first doc is found 6 rows below "Users".  If we don't
     # recognize an assignment, add its name to a string that will be returned
-    # via an Exception when all is complete.  That we report all unrecognized
-    # assignments in the file at once.
+    # via an Exception when all is complete.  That way, we report all 
+    # unrecognized assignments in the file at once.
     num_unk_assignments = 0
     unk_assignments_string = "Could not recognize the following " + \
         "assignment(s):\n"
     output = schedule_module.Schedule()
     for row in range(start_row+6, end_row):
         doctor = s.cell(row, 0).value # The 1st cell of the row has doc's name
-        for col in range(start_col, end_col):
+        for col in range(start_col, end_col + 1):
             daydate = s.cell(0, col).value # String with day/date e.g. "Tu\n2"
             date_of_month = daydate.split()[1] # Now just the date - e.g. "2"
             date = dt.datetime(year, month, int(date_of_month))
@@ -136,52 +143,57 @@ def unit_tests():
 
     try:
         nosuchfile = read_assignments("No such file")
+        print("1.  !!!FAILED TO REPORT ERROR ON FILE NOT FOUND TESTING!!!")
     except FileNotFoundError as e:
         if str(e) == "Couldn't find file No such file":
             print("1.  Passed File Not Found testing!")
         else:
-            print("1.  !!!FAILED FILE NOT FOUND TESTING!!!")
+            print("1.  !!!REPORTED WRONG ERROR ON FILE NOT FOUND TESTING!!!")
 
     try:
         badfirstsheet = read_assignments("Test Files/Bad First Sheet" + \
             " Assignments.xls")
+        print("2.  !!!FAILED TO REPORT ERROR ON FIRST SHEET BAD TESTING!!!")
     except BadInputFile as e:
         if str(e) == "Couldn't make sense of the name of the first sheet " + \
-           "of Test Files/Bad First Sheet Assignments.xls":
+            "of Test Files/Bad First Sheet Assignments.xls":
             print("2.  Passed First Sheet Bad testing!")
         else:
-            print("2.  !!!FAILED FIRST SHEET BAD TESTING!!!")
+            print("2.  !!!REPORTED WRONG ERROR ON FIRST SHEET BAD TESTING!!!")
 
     try:
         nousers = read_assignments("Test Files/No Users" + \
             " Assignments.xls")
+        print("3.  !!!FAILED TO REPORT ERROR ON NO 'USERS' TESTING!!!")
     except BadInputFile as e:
         if str(e) == "Never found 'Users' in file Test Files/No Users " + \
             "Assignments.xls":
             print("3.  Passed No 'Users' testing!")
         else:
-            print("3.  !!!FAILED NO 'USERS' TESTING!!!")
+            print("3.  !!!REPORTED WRONG ERROR ON NO 'USERS' TESTING!!!")
 
     try:
         badfirstday = read_assignments("Test Files/Bad First Day" + \
             " Assignments.xls")
+        print("4.  !!!FAILED TO REPORT ERROR ON BAD FIRST DAY TESTING!!!")
     except BadInputFile as e:
         if str(e) == "Never found first day of month in file Test Files/" + \
-           "Bad First Day Assignments.xls":
+            "Bad First Day Assignments.xls":
             print("4.  Passed Bad First Day testing!")
         else:
-            print("4.  !!!FAILED BAD FIRST DAY TESTING!!!")
+            print("4.  !!!REPORTED WRONG ERROR ON BAD FIRST DAY TESTING!!!")
 
     try:
         badassignment = read_assignments("Test Files/Bad Assignment" + \
             " Assignments.xls")
+        print("5.  !!!FAILED TO REPORT ERROR ON BAD ASSIGNMENT TESTING!!!")
     except AssignmentNotRecognized as e:
         if str(e) == "Could not recognize the following assignment(s):\n" + \
-           "A Very Bad Assignment at row 667 col 13.\n" + \
-           "Another Bad Assignment at row 672 col 11.\n":
+            "A Very Bad Assignment at row 667 col 13.\n" + \
+            "Another Bad Assignment at row 672 col 11.\n":
             print("5.  Passed Bad Assignment testing!")
         else:
-            print("5.  !!!FAILED BAD ASSIGNMENT TESTING!!!")
+            print("5.  !!!REPORTED WRONG ERROR ON BAD ASSIGNMENT TESTING!!!")
 
     # Note, the test below also incorporations ensuring that request/request,
     # assignment/assignment, assignment/request, request/assignment are read

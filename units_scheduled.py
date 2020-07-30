@@ -73,7 +73,7 @@ def units_scheduled(filename):
     return data
 
 # Unit test script/basic use case for the units_scheduled.py module
-def unit_tests(filename = "June 2020.xls"):
+def unit_tests(filename = "August 2020.xls"):
     if filename == "": # Run unit tests
         data = units_scheduled("Test Files/Test Units Scheduled Assignments.xls")
         assert data[dt.date(2020, 7, 6)]["SAC ED"] == 4
@@ -94,12 +94,34 @@ def unit_tests(filename = "June 2020.xls"):
     else: # Run this basic version that we currently have urgent need for
         data = units_scheduled(filename)
         list_dates =  data.keys()
-        AACC_units = 0
+        SACEDUnits = 0
+        SACPITUnits = 0
+        ROSEDUnits = 0
+        ROSPITUnits = 0
+        CDAUnits = 0
+        EPRPUnits = 0
+        AACCUnits = 0
+        RLSUnits = 0
         for date in list_dates:
             SAC_capacity = data[date]["SAC ED"]*5.7 + data[date]["SAC PIT"]*9.3
             ROS_capacity = data[date]["ROS ED"]*5.7 + data[date]["ROS PIT"]*9.3
-            AACC_units += data[date]["AACC"] 
-            print(str(AACC_units))
+            SACEDUnits += data[date]["SAC ED"]
+            SACPITUnits += data[date]["SAC PIT"]
+            ROSEDUnits += data[date]["ROS ED"]
+            ROSPITUnits += data[date]["ROS PIT"]
+            CDAUnits += data[date]["CDA"]
+            EPRPUnits += data[date]["EPRP"]
+            AACCUnits += data[date]["AACC"]
+            RLSUnits += data[date]["Regional Lab"]
+            print(str(SAC_capacity))
+        print("SAC ED Units = " + str(SACEDUnits))
+        print("SAC PIT Units = " + str(SACPITUnits))
+        print("ROS ED Units = " + str(ROSEDUnits))
+        print("ROS PIT Units = " + str(ROSPITUnits))
+        print("CDA Units = " + str(CDAUnits))
+        print("EPRP Units = " + str(EPRPUnits))
+        print("AACC Units = " + str(AACCUnits))
+        print("RLS Units = " + str(RLSUnits))        
         
     
 if __name__ == "__main__":
