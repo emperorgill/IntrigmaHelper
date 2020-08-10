@@ -113,7 +113,7 @@ def unit_tests(filename = "August 2020.xls"):
             EPRPUnits += data[date]["EPRP"]
             AACCUnits += data[date]["AACC"]
             RLSUnits += data[date]["Regional Lab"]
-            print(str(SAC_capacity))
+            print(str(ROS_capacity))
         print("SAC ED Units = " + str(SACEDUnits))
         print("SAC PIT Units = " + str(SACPITUnits))
         print("ROS ED Units = " + str(ROSEDUnits))
