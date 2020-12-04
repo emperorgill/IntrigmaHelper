@@ -19,6 +19,8 @@ make any sense."""
 # To Do
 # 1.  Figure out how to redirect the xlrd "errors" (maybe... details in
 # https://groups.google.com/forum/m/#!topic/python-excel/6Lue-1mTPSM)
+# 2.  Is there an easy way to handle the case where a month is > 31 days
+# so there's more than one date that's the "1st" (e.g. winter holiday)?
 
 # Standard Library Imports
 import datetime as dt
@@ -32,15 +34,16 @@ import request_module
 import schedule_module
 from exceptions import BadInputFile, AssignmentNotRecognized
 
+
 # Functions
 def read_assignments(filename):
     """Read all of the assignments from a filename-specified Intrigma
     Assignments .xls file and return them in a Schedule object."""
     try:
-        wb = xlrd.open_workbook(filename) #This line generates the xlrd "errors"
+        wb = xlrd.open_workbook(filename)  # This line generates the xlrd "errors"
     except FileNotFoundError:
         raise FileNotFoundError("Couldn't find file " + filename)
-    
+  
     try:
         s = wb.sheet_by_index(0) # Just need the first sheet
         # The name of the first sheet gives us the month and year of this
@@ -48,14 +51,14 @@ def read_assignments(filename):
         # 3 and 2020)
         sheet_name_as_list = s.name.split()
         month_as_text = sheet_name_as_list[0]
-        list_of_months = ["January", "February", "March", "April", "May", 
-                          "June", "July", "August", "September", "October", 
+        list_of_months = ["January", "February", "March", "April", "May",
+                          "June", "July", "August", "September", "October",
                           "November", "December"]
-        month = list_of_months.index(month_as_text) + 1 # Months start at 1...
+        month = list_of_months.index(month_as_text) + 1  # Months start at 1...
         year = int(sheet_name_as_list[1])
     except:
-        raise BadInputFile("Couldn't make sense of the name of the first " + \
-                "sheet of " + filename)
+        raise BadInputFile("Couldn't make sense of the name of the first " + 
+                           "sheet of " + filename)
 
     # In the first column, somewhere near the bottom of the sheet, is the
     # word "Users".  We need to find it because all of the users lie between
@@ -65,30 +68,30 @@ def read_assignments(filename):
     end_row = 0
     # Below, the start index has to be s.nrows-1 to read the last line of
     # the XLS.  Using just s.nrows has it try to read past the last line.
-    # Stop index has to be -1 to get it to the i=0 case; otherwise, the 
+    # Stop index has to be -1 to get it to the i=0 case; otherwise, the
     # very first line of the XLS is never checked.
     for i in range(s.nrows-1, -1, -1):
-        if (s.cell(i, 0).value) == 'Users': # Searching for 'Users'
+        if (s.cell(i, 0).value) == 'Users':  # Searching for 'Users'
             start_row = i
             end_row = s.nrows
             break
-        if i == 0: # Finished searching without ever finding "Users"
+        if i == 0:  # Finished searching without ever finding "Users"
             raise BadInputFile("Never found 'Users' in file " + filename)
-          
+
     # In the first row, there will be a cell that has the number "1" in it.
-    # That's the first day of the month so we need that.  
+    # That's the first day of the month so we need that.
     start_col = None
-    for i in range(s.ncols): #Verified to check every single column
+    for i in range(s.ncols):  # Verified to check every single column
         split_text = s.cell(0, i).value.split()
-        if len(split_text) > 1: # Need because 1st cell has just 1 word in it
-                                # while all the other cells have 2
+        if len(split_text) > 1:  # Need because 1st cell has just 1 word in it
+                                 # while all the other cells have 2
             if split_text[1] == "1":
                 start_col = i
                 break
-    if start_col == None:
+    if start_col is None:
         raise BadInputFile("Never found first day of month in file "
                            + filename)
-    
+
     # We also need the last day of the month but the trouble is that SOMETIMES
     # Intrigma has the last column be a "Units" column and SOMETIMES it has 
     # the last column be the last day of the month.  You would not believe how

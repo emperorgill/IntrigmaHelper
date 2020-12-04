@@ -30,3 +30,16 @@ SS
 SE
 M
 MD
+
+V
+V*
+v
+v*
+E
+E*
+A
+A*
+k
+no
+no2
+x
